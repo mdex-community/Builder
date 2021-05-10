@@ -1,10 +1,10 @@
 package derive
 
 import (
+	"Builder/artifact"
 	"Builder/compile"
 	"Builder/logger"
 	"Builder/utils"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -28,7 +28,7 @@ func ProjectType() {
 	var filePath string
 	for _, file := range filesToCompileFrom {
 
-		filePath = findFilePathInHiddenDir(file)
+		filePath = findFilePath(file)
 		fileExists, err := fileExistsInDir(filePath)
 
 		if err != nil {
@@ -88,7 +88,8 @@ func deriveProjectByExtension() {
 	extensions := []string{".csproj", ".sln"}
 
 	for _, ext := range extensions {
-		extFound, filePath := extExistsFunction(dirPathToFindExt, ext)
+		extFound, fileName := artifact.ExtExistsFunction(dirPathToFindExt, ext)
+		filePath := strings.Replace(findFilePath(fileName), ".hidden", "workspace", 1)
 
 		if extFound {
 			switch ext {
@@ -153,7 +154,7 @@ func ListAllProjectsInSolution(filePath string) []string {
 	return listOfProjectsArray
 }
 
-func findFilePathInHiddenDir(file string) string {
+func findFilePath(file string) string {
 
 	var dirPath string
 	if os.Getenv("BUILDER_COMMAND") == "true" {
@@ -203,41 +204,6 @@ func fileExistsInDir(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err
-}
-
-func extExistsFunction(dirPath string, ext string) (bool, string) {
-	extFound := false
-
-	d, err := os.Open(dirPath)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	defer d.Close()
-
-	files, err := d.Readdir(-1)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	var fileName string
-
-	for _, file := range files {
-		if file.Mode().IsRegular() {
-			if filepath.Ext(file.Name()) == ext {
-				fileName = file.Name()
-				extFound = true
-			}
-		}
-	}
-
-	var filePath string
-	if fileName != "" {
-		filePath = strings.Replace(findFilePathInHiddenDir(fileName), ".hidden", "workspace", 1)
-	}
-
-	return extFound, filePath
 }
 
 func selectPathToCompileFrom(filePaths []string) string {
