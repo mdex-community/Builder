@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
-	"os"
 	"os/user"
 	"time"
 
@@ -19,13 +18,9 @@ func Metadata(path string) {
 	ip := GetIPAdress().String()
 	userName := GetUserData().Username
 	homeDir := GetUserData().HomeDir
-
-	var masterGitHash, branchGitHash, branchName string
-	if os.Getenv("BUILDER_COMMAND") != "true" {
-		masterGitHash = GetMasterGitHash()
-		branchGitHash = GetBranchGitHash()
-		branchName = GetBranchName()
-	}
+	masterGitHash := GetMasterGitHash()
+	branchGitHash := GetBranchGitHash()
+	branchName := GetBranchName()
 
 	//Contains a collection of fileds with user's metadata
 	userMetaData := AllMetaData{

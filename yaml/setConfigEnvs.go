@@ -5,13 +5,12 @@ import (
 	"os"
 )
 
-
 func ConfigEnvs(byi interface{}) {
 	//change interface{} into map interface{}
 	bldyml, _ := byi.(map[string]interface{})
 
 	//~~~Check for specific key and create env var based on value~~~
-	
+
 	//check for dir path
 	if val, ok := bldyml["projectpath"]; ok {
 		_, present := os.LookupEnv("BUILDER_DIR_PATH")
@@ -29,7 +28,7 @@ func ConfigEnvs(byi interface{}) {
 			//convert val interface{} to string to be set as env var
 			valStr := fmt.Sprintf("%v", val)
 			os.Setenv("BUILDER_PROJECT_TYPE", valStr)
-		} 
+		}
 	}
 
 	//check for build type
@@ -69,6 +68,26 @@ func ConfigEnvs(byi interface{}) {
 			//convert val interface{} to string to be set as env var
 			valStr := fmt.Sprintf("%v", val)
 			os.Setenv("BUILDER_OUTPUT_PATH", valStr)
+		}
+	}
+
+	//check for projec repo
+	if val, ok := bldyml["projectrepo"]; ok {
+		_, present := os.LookupEnv("BUILDER_PROJECT_REPO")
+		if !present {
+			//convert val interface{} to string to be set as env var
+			valStr := fmt.Sprintf("%v", val)
+			os.Setenv("BUILDER_PROJECT_REPO", valStr)
+		}
+	}
+
+	//check for projec branch
+	if val, ok := bldyml["projectbranch"]; ok {
+		_, present := os.LookupEnv("BUILDER_PROJECT_BRANCH")
+		if !present {
+			//convert val interface{} to string to be set as env var
+			valStr := fmt.Sprintf("%v", val)
+			os.Setenv("BUILDER_PROJECT_BRANCH", valStr)
 		}
 	}
 }

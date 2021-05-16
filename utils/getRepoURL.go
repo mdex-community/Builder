@@ -11,7 +11,7 @@ func GetRepoURL() string {
 	//grab URL first
 	var repo string
 	for i, v := range args {
-		if v == "init" || v == "config"{
+		if v == "init" || v == "config" {
 			if len(args) <= i+1 {
 				// logger.ErrorLogger.Println("No Repo Url Provided")
 				log.Fatal("No Repo Url Provided")
@@ -23,7 +23,9 @@ func GetRepoURL() string {
 	}
 	if repo == "" {
 		// logger.ErrorLogger.Println("No Repo Url Provided")
-		log.Fatal("No Repo Url Provided") 
+		log.Fatal("No Repo Url Provided")
 	}
+
+	os.Setenv("BUILDER_PROJECT_REPO", repo)
 	return repo
 }
