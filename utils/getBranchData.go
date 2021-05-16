@@ -14,7 +14,15 @@ func BranchFlagExists() bool {
 }
 
 func GetBranchName() string {
-	_, branchName := GetBranchFlagAndName()
+	var branchName string
+
+	if os.Getenv("BUILDER_COMMAND") == "true" {
+		branchName = os.Getenv("BUILDER_PROJECT_BRANCH")
+	} else {
+		_, branchName = GetBranchFlagAndName()
+
+	}
+
 	return branchName
 }
 
@@ -32,7 +40,13 @@ func BranchNameExists(branches []string) bool {
 }
 
 func GetAllRepoBranches() []string {
-	repo := GetRepoURL()
+	var repo string
+	if os.Getenv("BUILDER_COMMAND") == "true" {
+		repo = os.Getenv("BUILDER_PROJECT_REPO")
+	} else {
+		repo = GetRepoURL()
+	}
+
 	output, _ := exec.Command("git", "ls-remote", repo).Output()
 	stringifyAllBranches := string(output)
 	allRepoBranches := strings.Split(stringifyAllBranches, "\n")
@@ -90,5 +104,6 @@ func GetBranchFlagAndName() (bool, string) {
 		}
 	}
 
+	os.Setenv("BUILDER_PROJECT_BRANCH", branchName)
 	return branchFlag, branchName
 }
